@@ -1,0 +1,5 @@
+
+add_executable(Timestamp_unittest Timestamp_unittest.c)
+target_link_libraries(Timestamp_unittest u4c_base)
+add_test(NAME Timestamp_unittest COMMAND Timestamp_unittest)
+
