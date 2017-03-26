@@ -1,0 +1,7 @@
+*.a
+*.o
+*.swp
+*.out
+core
+build
+tags
