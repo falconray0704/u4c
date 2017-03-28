@@ -8,77 +8,92 @@
 #include <stdbool.h>
 #include <string.h>
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #define Size32B 32
 #define MicroSecondsPerSecond 1000000
-
-
-//#define newTimestamp(microSeconds) {0}
-
-#define newTimestamp(microSeconds) { 0 }
-#define newStack(microSeconds) { 0, sizeof(microSeconds) / sizeof(int), (microSeconds) }
-/*
-#define newTimestamp(microSeconds) {    \
-    (microSeconds)                        \
-}
-*/
-
+#define newUTime(microSec) { microSec }
 
 ///
-/// microseconds timestamp in UTC
+/// UTC microseconds timestamp in epoch
 ///
 ///
 typedef struct
 {
-    int64_t microSecondsSinceEpoch;
-} Timestamp;
+    int64_t microSec;
+} UTime;
 
-Timestamp timestampNow();
+///
+/// Get UTC time in micro seconds.
+///
+/// @param
+///
+/// @return UTime
+///
+UTime uTimeNow();
 
-void timestamp2String(Timestamp *timestamp, char buf[32]);
-void timestamp2FormattedString(Timestamp *timestamp, char buf[32], bool showMicroseconds);
+///
+/// Get UTC time after N micro seconds in micro seconds.
+///
+/// @param t, microseconds
+///
+/// @return UTime
+///
+UTime uTimeAfterUnixTime(time_t t, int microseconds);
 
-static Timestamp timestampFromUnixTime(time_t t, int microseconds)
+///
+/// Parse UTime into string.
+///
+/// @param uTime, outBuf
+///
+/// @return
+///
+void uTime2String(UTime *uTime, char outBuf[Size32B]);
+
+///
+/// Parse UTime into formated string.
+///
+/// @param uTime, outBuf
+///
+/// @return
+///
+void uTime2FormattedString(UTime *uTime, char outBuf[Size32B], bool showMicroseconds);
+
+inline bool isUTimeLt(UTime lUTime, UTime rUTime)
 {
-    Timestamp ts = newTimestamp((int64_t)(t) * MicroSecondsPerSecond + microseconds);
-    return ts;
+    return lUTime.microSec < rUTime.microSec;
 }
 
-inline bool isTimestampLt(Timestamp lhs, Timestamp rhs)
+inline bool isUTimeEq(UTime lhs, UTime rhs)
 {
-    return lhs.microSecondsSinceEpoch < rhs.microSecondsSinceEpoch;
-}
-
-inline bool isTimestampEq(Timestamp lhs, Timestamp rhs)
-{
-    return lhs.microSecondsSinceEpoch == rhs.microSecondsSinceEpoch;
+    return lhs.microSec == rhs.microSec;
 }
 
 ///
-/// Gets time difference of two timestamps in seconds.
+/// Gets time difference of two uTimes in seconds.
 ///
 /// @param high, low
-/// @return (high-low) in seconds
+/// @return (t1 - t2) in seconds
 /// @c double has 52-bit precision, enough for one-microsecond
 /// resolution for next 100 years.
-inline double timestampDifference(Timestamp high, Timestamp low)
+inline double uTimeDiff(UTime t1, UTime t2)
 {
-    return (double)((int64_t)(high.microSecondsSinceEpoch - low.microSecondsSinceEpoch) / MicroSecondsPerSecond);
+    return ((double)(t1.microSec - t2.microSec)) / MicroSecondsPerSecond;
 }
 
 ///
-/// add @c seconds to the given timestamp.
+/// add @c seconds to the given uTime.
 ///
 /// @return non
 ///
-inline void timestampAddTime(Timestamp *timestamp, double seconds)
+inline void uTimeAddTime(UTime *uTime, double seconds)
 {
-    if (timestamp == NULL)
+    if (uTime == NULL)
         return;
-    timestamp->microSecondsSinceEpoch + (int64_t)(seconds * MicroSecondsPerSecond);
+    uTime->microSec += (int64_t)(seconds * MicroSecondsPerSecond);
 }
 
 #ifdef __cplusplus
