@@ -8,13 +8,13 @@
 #include <stdbool.h>
 #include <string.h>
 
+#include <base/u4cGlobalDef.h>
+
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define Size32B 32
-#define MicroSecondsPerSecond 1000000
 #define newUTime(microSec) { microSec }
 
 ///
