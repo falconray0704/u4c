@@ -96,5 +96,28 @@ int day_UDate(const UDate *uDate)
         return -1;
 }
 
+int isLeapYear_UDate(int year)
+{
+    if (year % 400 == 0)
+        return 1;
+    else if (year % 100 == 0)
+        return 0;
+    else if (year % 4 == 0)
+        return 1;
+    else
+        return 0;
+}
+
+int daysOfMonth_UDate(int year, int month)
+{
+    static int days[2][kMonthsOfYear_UDate + 1] =
+    {
+        { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 },
+        { 0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 },
+    };
+    return days[isLeapYear_UDate(year)][month];
+}
+
+
 
 

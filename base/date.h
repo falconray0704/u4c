@@ -28,6 +28,8 @@ typedef struct
     int day;  // [1..31]
 }YearMonthDay_UDate;
 
+#define kMonthsOfYear_UDate 12
+#define kDaysPerWeek_UDate 7
 
 #define a_UDate ((14 - month) / 12)
 #define y_UDate (year + 4800 - a_UDate)
@@ -40,7 +42,6 @@ typedef struct
 #define GetJulianDayNumber_UDate(year,month,day) (day + (153 * (month + 12 * ((14 - month) / 12) - 3) + 2) / 5 + (year + 4800 - ((14 - month) / 12)) * 365 + (year + 4800 - ((14 - month) / 12)) / 4 - (year + 4800 - ((14 - month) / 12)) / 100 + (year + 4800 - ((14 - month) / 12)) / 400 - 32045)
 
 */
-#define kDaysPerWeek_UDate 7
 #define kJulianDayOf1970_01_01_UDate (GetJulianDayNumber_UDate(1970,1,1))
 #define newUDateFrom_YearMonthDay(year,month,day) { GetJulianDayNumber_UDate(year,month,day) }
 #define newUDateFrom_tm(tm) newUDateFrom_YearMonthDay(tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday)
@@ -73,6 +74,9 @@ inline bool isEq_UDate(const UDate *l, const UDate *r)
 {
   return l->julianDayNumber == r->julianDayNumber;
 }
+
+int isLeapYear_UDate(int year);
+int daysOfMonth_UDate(int year, int month);
 
 #ifdef __cplusplus
 }
