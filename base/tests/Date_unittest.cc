@@ -59,6 +59,20 @@ TEST(Base_UDate, daysOfMonth_UDate)
     }
 }
 
+TEST(Base_UDate, valid_UDate)
+{
+    EXPECT_FALSE(valid_UDate(NULL));
+
+    UDate d1 = newUDate(-1);
+    EXPECT_FALSE(valid_UDate(&d1));
+
+    UDate d2 = newUDate(0);
+    EXPECT_FALSE(valid_UDate(&d2));
+
+    UDate d3 = newUDate(2017);
+    EXPECT_TRUE(valid_UDate(&d3));
+}
+
 /*
 void passByConstReference(const Date& x)
 {
