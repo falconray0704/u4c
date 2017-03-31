@@ -48,7 +48,7 @@ YearMonthDay_UDate * yearMonthDayFromUDate(const UDate *uDate, YearMonthDay_UDat
 ///
 /// Converts to yyyy-mm-dd format.
 ///
-char * uDate2IsoString(const UDate *uDate, char outBuf[Size32B] )
+char * toIsoString_UDate(const UDate *uDate, char outBuf[Size32B] )
 {
     YearMonthDay_UDate ymd;
 

@@ -53,7 +53,7 @@ YearMonthDay_UDate * yearMonthDayFromUDate(const UDate *uDate , YearMonthDay_UDa
 ///
 /// Converts to yyyy-mm-dd format.
 ///
-char * uDate2IsoString(const UDate *uDate, char outBuf[Size32B] );
+char * toIsoString_UDate(const UDate *uDate, char outBuf[Size32B] );
 
 // [0, 1, ..., 6] => [Sunday, Monday, ..., Saturday ]
 int weekDay_UDate(const UDate *uDate);

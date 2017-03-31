@@ -6,9 +6,8 @@
 
 TEST(Base_UDate, isLeapYear_UDate)
 {
-    /*当我们遇到这个问题时，大家都知道该怎么计算，那就是所谓的：四年一闰，百年不闰，四百年再闰。
-    根据这个写出的程序的核心算法就是：
-    if（(n%4 == 0 && n%100 != 0) || n %400 == 0）{}
+    /*
+        if（(n%4 == 0 && n%100 != 0) || n %400 == 0）{}
     */
 
     for (int year = 1900; year < 2500; ++year)
@@ -206,6 +205,34 @@ TEST(Base_UDate, yearMonthDayFromUDate)
                 EXPECT_EQ(year, ymd.year);
                 EXPECT_EQ(month, ymd.month);
                 EXPECT_EQ(day, ymd.day);
+
+                ++julianDayNumber;
+            }
+        }
+    }
+
+}
+
+TEST(Base_UDate, toIsoString_UDate )
+{
+
+    int julianDayNumber = 2415021;
+
+    for (int year = 1900; year < 2500; ++year)
+    {
+        for (int month = 1; month <= kMonthsOfYear_UDate; ++month)
+        {
+            for (int day = 1; day <= daysOfMonth_UDate(year, month); ++day)
+            {
+                char outBuf[Size32B] = {0};
+                char expectedBuf[Size32B] = {0};
+
+                UDate d = newUDateFrom_YearMonthDay(year,month,day);
+                EXPECT_EQ(julianDayNumber, d.julianDayNumber);
+
+                sprintf(expectedBuf,"%4d-%02d-%02d",year,month,day);
+                EXPECT_NE(static_cast<char*>(NULL),toIsoString_UDate(&d,outBuf));
+                EXPECT_EQ(0,strncmp(outBuf, expectedBuf, strlen(expectedBuf)));
 
                 ++julianDayNumber;
             }
