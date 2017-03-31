@@ -1,6 +1,7 @@
 set(base_SRCS
   timestamp.c
   date.c
+  vector.c
   )
 
 add_library(u4c_base ${base_SRCS})
