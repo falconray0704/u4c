@@ -59,6 +59,65 @@ TEST(Base_UDate, daysOfMonth_UDate)
     }
 }
 
+TEST(Base_UDate, newUDate)
+{
+
+    int julianDayNumber = 2415021;
+
+    for (int year = 1900; year < 2500; ++year)
+    {
+        for (int month = 1; month <= kMonthsOfYear_UDate; ++month)
+        {
+            for (int day = 1; day <= daysOfMonth_UDate(year, month); ++day)
+            {
+                UDate d = newUDate(julianDayNumber);
+                EXPECT_EQ(julianDayNumber, d.julianDayNumber);
+                ++julianDayNumber;
+            }
+        }
+    }
+
+}
+
+TEST(Base_UDate, GetJulianDayNumber_UDate)
+{
+
+    int julianDayNumber = 2415021;
+
+    for (int year = 1900; year < 2500; ++year)
+    {
+        for (int month = 1; month <= kMonthsOfYear_UDate; ++month)
+        {
+            for (int day = 1; day <= daysOfMonth_UDate(year, month); ++day)
+            {
+                EXPECT_EQ(julianDayNumber, GetJulianDayNumber_UDate(year,month,day));
+                ++julianDayNumber;
+            }
+        }
+    }
+
+}
+
+TEST(Base_UDate, newUDateFrom_YearMonthDay)
+{
+
+    int julianDayNumber = 2415021;
+
+    for (int year = 1900; year < 2500; ++year)
+    {
+        for (int month = 1; month <= kMonthsOfYear_UDate; ++month)
+        {
+            for (int day = 1; day <= daysOfMonth_UDate(year, month); ++day)
+            {
+                UDate d = newUDateFrom_YearMonthDay(year,month,day);
+                EXPECT_EQ(julianDayNumber, d.julianDayNumber);
+                ++julianDayNumber;
+            }
+        }
+    }
+
+}
+
 TEST(Base_UDate, valid_UDate)
 {
     EXPECT_FALSE(valid_UDate(NULL));
@@ -73,62 +132,143 @@ TEST(Base_UDate, valid_UDate)
     EXPECT_TRUE(valid_UDate(&d3));
 }
 
-/*
-void passByConstReference(const Date& x)
+TEST(Base_UDate, getJulianDayNumber_UDate)
 {
-  printf("%s\n", x.toIsoString().c_str());
-}
 
-void passByValue(Date x)
-{
-  printf("%s\n", x.toIsoString().c_str());
-}
+    int julianDayNumber = 2415021;
 
-int main()
-{
-  time_t now = time(NULL);
-  struct tm t1 = *gmtime(&now);
-  struct tm t2 = *localtime(&now);
-  Date someDay(2008, 9, 10);
-  printf("%s\n", someDay.toIsoString().c_str());
-  passByValue(someDay);
-  passByConstReference(someDay);
-  Date todayUtc(t1);
-  printf("%s\n", todayUtc.toIsoString().c_str());
-  Date todayLocal(t2);
-  printf("%s\n", todayLocal.toIsoString().c_str());
-
-  int julianDayNumber = 2415021;
-  int weekDay = 1; // Monday
-
-  for (int year = 1900; year < 2500; ++year)
-  {
-    assert(Date(year, 3, 1).julianDayNumber() - Date(year, 2, 29).julianDayNumber()
-           == isLeapYear(year));
-    for (int month = 1; month <= kMonthsOfYear; ++month)
+    for (int year = 1900; year < 2500; ++year)
     {
-      for (int day = 1; day <= daysOfMonth(year, month); ++day)
-      {
-        Date d(year, month, day);
-        // printf("%s %d\n", d.toString().c_str(), d.weekDay());
-        assert(year == d.year());
-        assert(month == d.month());
-        assert(day == d.day());
-        assert(weekDay == d.weekDay());
-        assert(julianDayNumber == d.julianDayNumber());
-
-        Date d2(julianDayNumber);
-        assert(year == d2.year());
-        assert(month == d2.month());
-        assert(day == d2.day());
-        assert(weekDay == d2.weekDay());
-        assert(julianDayNumber == d2.julianDayNumber());
-
-        ++julianDayNumber;
-        weekDay = (weekDay+1) % 7;
-      }
+        for (int month = 1; month <= kMonthsOfYear_UDate; ++month)
+        {
+            for (int day = 1; day <= daysOfMonth_UDate(year, month); ++day)
+            {
+                EXPECT_EQ(julianDayNumber, getJulianDayNumber_UDate(year,month,day));
+                ++julianDayNumber;
+            }
+        }
     }
-  }
-  printf("All passed.\n");
+
 }
-*/
+
+TEST(Base_UDate, getYearMonthDayFromJulianDayNumber)
+{
+
+    int julianDayNumber = 2415021;
+
+    for (int year = 1900; year < 2500; ++year)
+    {
+        for (int month = 1; month <= kMonthsOfYear_UDate; ++month)
+        {
+            for (int day = 1; day <= daysOfMonth_UDate(year, month); ++day)
+            {
+                YearMonthDay_UDate ymd = getYearMonthDayFromJulianDayNumber(julianDayNumber);
+                EXPECT_EQ(year, ymd.year);
+                EXPECT_EQ(month, ymd.month);
+                EXPECT_EQ(day, ymd.day);
+
+                ++julianDayNumber;
+            }
+        }
+    }
+
+}
+
+TEST(Base_UDate, yearMonthDayFromUDate_null_args)
+{
+
+    UDate d;
+    YearMonthDay_UDate ymd;
+
+    EXPECT_EQ(static_cast<YearMonthDay_UDate *>(NULL),yearMonthDayFromUDate(NULL,&ymd));
+    EXPECT_EQ(static_cast<YearMonthDay_UDate *>(NULL),yearMonthDayFromUDate(&d, NULL));
+    EXPECT_EQ(static_cast<YearMonthDay_UDate *>(NULL),yearMonthDayFromUDate(NULL, NULL));
+
+}
+
+TEST(Base_UDate, yearMonthDayFromUDate)
+{
+
+    int julianDayNumber = 2415021;
+
+    for (int year = 1900; year < 2500; ++year)
+    {
+        for (int month = 1; month <= kMonthsOfYear_UDate; ++month)
+        {
+            for (int day = 1; day <= daysOfMonth_UDate(year, month); ++day)
+            {
+                UDate d = newUDateFrom_YearMonthDay(year,month,day);
+                YearMonthDay_UDate ymd = {0,0,0};
+
+                EXPECT_EQ(julianDayNumber, d.julianDayNumber);
+
+                EXPECT_NE(static_cast<YearMonthDay_UDate *>(NULL),yearMonthDayFromUDate(&d,&ymd));
+                EXPECT_EQ(year, ymd.year);
+                EXPECT_EQ(month, ymd.month);
+                EXPECT_EQ(day, ymd.day);
+
+                ++julianDayNumber;
+            }
+        }
+    }
+
+}
+
+TEST(Base_UDate, day_UDate_month_UDate_year_UDate_weekDay_UDate)
+{
+
+    int julianDayNumber = 2415021;
+    int weekDay = 1; // Monday
+
+    for (int year = 1900; year < 2500; ++year)
+    {
+        for (int month = 1; month <= kMonthsOfYear_UDate; ++month)
+        {
+            for (int day = 1; day <= daysOfMonth_UDate(year, month); ++day)
+            {
+                UDate d = newUDate(julianDayNumber);
+
+                EXPECT_EQ(year, year_UDate(&d) );
+                EXPECT_EQ(month, month_UDate(&d) );
+                EXPECT_EQ(day, day_UDate(&d) );
+                EXPECT_EQ(weekDay, weekDay_UDate(&d) );
+
+                weekDay = (weekDay+1) % 7;
+                ++julianDayNumber;
+            }
+        }
+    }
+
+}
+
+TEST(Base_UDate, isLt_UDate)
+{
+    UDate d1 = newUDateFrom_YearMonthDay(2016,02,01);
+    UDate d2 = newUDateFrom_YearMonthDay(2017,01,03);
+    UDate d3 = newUDateFrom_YearMonthDay(2017,01,03);
+
+    EXPECT_TRUE(isLt_UDate(&d1,&d2));
+    EXPECT_FALSE(isLt_UDate(&d2,&d1));
+    EXPECT_FALSE(isLt_UDate(&d2,&d3));
+
+    EXPECT_FALSE(isLt_UDate(NULL, &d1));
+    EXPECT_FALSE(isLt_UDate(&d2, NULL));
+    EXPECT_FALSE(isLt_UDate(NULL, NULL));
+}
+
+TEST(Base_UDate, isEq_UDate)
+{
+    UDate d1 = newUDateFrom_YearMonthDay(2016,02,01);
+    UDate d2 = newUDateFrom_YearMonthDay(2017,01,03);
+    UDate d3 = newUDateFrom_YearMonthDay(2017,01,03);
+
+    EXPECT_FALSE(isEq_UDate(&d2,&d1));
+    EXPECT_FALSE(isEq_UDate(&d1,&d2));
+
+    EXPECT_TRUE(isEq_UDate(&d2,&d3));
+
+    EXPECT_FALSE(isEq_UDate(NULL, &d1));
+    EXPECT_FALSE(isEq_UDate(&d2, NULL));
+    EXPECT_FALSE(isEq_UDate(NULL, NULL));
+}
+

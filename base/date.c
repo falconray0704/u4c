@@ -15,7 +15,6 @@ bool valid_UDate(const UDate * uDate)
 
 int getJulianDayNumber_UDate(int year, int month, int day)
 {
-    //(void) require_32_bit_integer_at_least; // no warning please
     int a = (14 - month) / 12;
     int y = year + 4800 - a;
     int m = month + 12 * a - 3;
