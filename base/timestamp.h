@@ -36,6 +36,15 @@ typedef struct
 UTime now_UTime();
 
 ///
+/// Get UTC time in seconds.
+///
+/// @param
+///
+/// @return time_t
+///
+time_t nowSec_UTime();
+
+///
 /// Get UTC time after N micro seconds in micro seconds.
 ///
 /// @param t, microseconds

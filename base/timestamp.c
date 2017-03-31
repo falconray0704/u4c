@@ -24,6 +24,21 @@ UTime now_UTime()
 }
 
 ///
+/// Get UTC time in seconds.
+///
+/// @param
+///
+/// @return time_t
+///
+time_t nowSec_UTime()
+{
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return tv.tv_sec;
+}
+
+
+///
 /// Get UTC time after N micro seconds in micro seconds.
 ///
 /// @param t, microseconds

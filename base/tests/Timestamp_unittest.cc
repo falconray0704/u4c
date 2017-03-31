@@ -15,6 +15,18 @@ TEST(Base_Timestamp, now_UTime)
 
 }
 
+TEST(Base_Timestamp, nowSec_UTime)
+{
+    struct timeval tv;
+
+    UTime now = now_UTime();
+    gettimeofday(&tv, NULL);
+
+    EXPECT_LE(0,tv.tv_sec - static_cast<time_t>(now.microSec / MicroSecondsPerSecond));
+    EXPECT_GE(1,tv.tv_sec - static_cast<time_t>(now.microSec / MicroSecondsPerSecond));
+
+}
+
 TEST(Base_Timestamp, afterUnixTime_UTime )
 {
     struct timeval tv;
