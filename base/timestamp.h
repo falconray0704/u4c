@@ -33,7 +33,7 @@ typedef struct
 ///
 /// @return UTime
 ///
-UTime uTimeNow();
+UTime now_UTime();
 
 ///
 /// Get UTC time after N micro seconds in micro seconds.
@@ -42,7 +42,7 @@ UTime uTimeNow();
 ///
 /// @return UTime
 ///
-UTime uTimeAfterUnixTime(time_t t, int microseconds);
+UTime afterUnixTime_UTime(time_t t, int microseconds);
 
 ///
 /// Parse UTime into string.
@@ -51,7 +51,7 @@ UTime uTimeAfterUnixTime(time_t t, int microseconds);
 ///
 /// @return
 ///
-void uTime2String(UTime *uTime, char outBuf[Size32B]);
+void toString_UTime(UTime *uTime, char outBuf[Size32B]);
 
 ///
 /// Parse UTime into formated string.
@@ -60,14 +60,14 @@ void uTime2String(UTime *uTime, char outBuf[Size32B]);
 ///
 /// @return
 ///
-void uTime2FormattedString(UTime *uTime, char outBuf[Size32B], bool showMicroseconds);
+void toFormattedString_UTime(UTime *uTime, char outBuf[Size32B], bool showMicroseconds);
 
-inline bool isUTimeLt(UTime lUTime, UTime rUTime)
+inline bool isLt_UTime(UTime lUTime, UTime rUTime)
 {
     return lUTime.microSec < rUTime.microSec;
 }
 
-inline bool isUTimeEq(UTime lhs, UTime rhs)
+inline bool isEq_UTime(UTime lhs, UTime rhs)
 {
     return lhs.microSec == rhs.microSec;
 }
@@ -79,7 +79,7 @@ inline bool isUTimeEq(UTime lhs, UTime rhs)
 /// @return (t1 - t2) in seconds
 /// @c double has 52-bit precision, enough for one-microsecond
 /// resolution for next 100 years.
-inline double uTimeDiff(UTime t1, UTime t2)
+inline double diffTime_UTime(UTime t1, UTime t2)
 {
     return ((double)(t1.microSec - t2.microSec)) / MicroSecondsPerSecond;
 }
@@ -89,7 +89,7 @@ inline double uTimeDiff(UTime t1, UTime t2)
 ///
 /// @return non
 ///
-inline void uTimeAddTime(UTime *uTime, double seconds)
+inline void addTime_UTime(UTime *uTime, double seconds)
 {
     if (uTime == NULL)
         return;

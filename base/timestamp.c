@@ -15,7 +15,7 @@
 ///
 /// @return UTime
 ///
-UTime uTimeNow()
+UTime now_UTime()
 {
     struct timeval tv;
     gettimeofday(&tv, NULL);
@@ -30,7 +30,7 @@ UTime uTimeNow()
 ///
 /// @return UTime
 ///
-UTime uTimeAfterUnixTime(time_t t, int microseconds)
+UTime afterUnixTime_UTime(time_t t, int microseconds)
 {
     UTime ts = newUTime((int64_t)(t) * MicroSecondsPerSecond + microseconds);
     return ts;
@@ -43,7 +43,7 @@ UTime uTimeAfterUnixTime(time_t t, int microseconds)
 ///
 /// @return
 ///
-void uTime2String(UTime *uTime, char outBuf[Size32B])
+void toString_UTime(UTime *uTime, char outBuf[Size32B])
 {
     memset(outBuf,Size32B,0x00);
     int64_t seconds = uTime->microSec / MicroSecondsPerSecond;
@@ -58,7 +58,7 @@ void uTime2String(UTime *uTime, char outBuf[Size32B])
 ///
 /// @return
 ///
-void uTime2FormattedString(UTime *uTime, char outBuf[Size32B], bool showMicroseconds)
+void toFormattedString_UTime(UTime *uTime, char outBuf[Size32B], bool showMicroseconds)
 {
     time_t seconds = (time_t)(uTime->microSec / MicroSecondsPerSecond);
     struct tm tm_time;

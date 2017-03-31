@@ -4,32 +4,31 @@
 #include <base/timestamp.h>
 #include <gtest/gtest.h>
 
-
-TEST(Base_Timestamp, uTimeNow)
+TEST(Base_Timestamp, now_UTime)
 {
     struct timeval tv;
     gettimeofday(&tv, NULL);
 
-    UTime now = uTimeNow();
+    UTime now = now_UTime();
 
     EXPECT_EQ(tv.tv_sec, static_cast<time_t>(now.microSec / MicroSecondsPerSecond));
 
 }
 
-TEST(Base_Timestamp, uTimeAfterUnixTime)
+TEST(Base_Timestamp, afterUnixTime_UTime )
 {
     struct timeval tv;
 
     gettimeofday(&tv, NULL);
 
-    UTime after = uTimeAfterUnixTime(tv.tv_sec , 123456);
+    UTime after = afterUnixTime_UTime(tv.tv_sec , 123456);
 
     EXPECT_EQ(1, after.microSec / (static_cast<int64_t>(tv.tv_sec) * MicroSecondsPerSecond) );
     EXPECT_EQ(123456, after.microSec % (static_cast<int64_t>(tv.tv_sec) * MicroSecondsPerSecond) );
 
 }
 
-TEST(Base_Timestamp, uTime2String)
+TEST(Base_Timestamp, toString_UTime)
 {
     char buf[Size32B];
     time_t ret;
@@ -53,8 +52,8 @@ TEST(Base_Timestamp, uTime2String)
     sprintf(buffer,"%ld",ret);
     ASSERT_LT(0,static_cast<int>(strlen(buffer)));
 
-    UTime now = uTimeAfterUnixTime(ret,0);
-    uTime2String(&now, buf);
+    UTime now = afterUnixTime_UTime(ret,0);
+    toString_UTime(&now, buf);
     ASSERT_LT(0,static_cast<int>(strlen(buf)));
 
     ASSERT_EQ(strlen(buffer),strlen(buf) - 7);
@@ -63,7 +62,7 @@ TEST(Base_Timestamp, uTime2String)
     printf("time_t:%s uTime:%s\n", buffer, buf);
 }
 
-TEST(Base_Timestamp, uTime2FormattedString_DoNotShowMicroseconds)
+TEST(Base_Timestamp, toFormattedString_UTime_DoNotShowMicroseconds)
 {
     char bufExp[Size32B] = {0};
     char buf[Size32B] = {0};
@@ -73,7 +72,7 @@ TEST(Base_Timestamp, uTime2FormattedString_DoNotShowMicroseconds)
     struct timeval tv;
 
     gettimeofday(&tv, NULL);
-    now = uTimeNow();
+    now = now_UTime();
 
     // expected string
     memset(bufExp,0x00,sizeof(bufExp));
@@ -97,7 +96,7 @@ TEST(Base_Timestamp, uTime2FormattedString_DoNotShowMicroseconds)
     printf("=== Expected strlen:%d - string:%s\n",static_cast<int>(strlen(bufExp)),bufExp);
     ASSERT_LT(0,static_cast<int>(strlen(bufExp)));
 
-    uTime2FormattedString(&now, buf, false);
+    toFormattedString_UTime(&now, buf, false);
     printf("--- uTime strlen:%d - string:%s\n", static_cast<int>(strlen(buf)), buf);
     ASSERT_LT(0,static_cast<int>(strlen(buf)));
 
@@ -105,7 +104,7 @@ TEST(Base_Timestamp, uTime2FormattedString_DoNotShowMicroseconds)
 
 }
 
-TEST(Base_Timestamp, uTime2FormattedString_ShowMicroseconds)
+TEST(Base_Timestamp, toFormattedString_UTime)
 {
     char bufExp[Size32B] = {0};
     char buf[Size32B] = {0};
@@ -115,7 +114,7 @@ TEST(Base_Timestamp, uTime2FormattedString_ShowMicroseconds)
     struct timeval tv;
 
     gettimeofday(&tv, NULL);
-    now = uTimeNow();
+    now = now_UTime();
 
     // expected string
     memset(bufExp,0x00,sizeof(bufExp));
@@ -140,7 +139,7 @@ TEST(Base_Timestamp, uTime2FormattedString_ShowMicroseconds)
     printf("=== Expected strlen:%d - string:%s\n",static_cast<int>(strlen(bufExp)),bufExp);
     ASSERT_LT(0,static_cast<int>(strlen(bufExp)));
 
-    uTime2FormattedString(&now, buf, true);
+    toFormattedString_UTime(&now, buf, true);
     printf("--- uTime strlen:%d - string:%s\n", static_cast<int>(strlen(buf)), buf);
     ASSERT_LT(0,static_cast<int>(strlen(buf)));
 
@@ -148,7 +147,7 @@ TEST(Base_Timestamp, uTime2FormattedString_ShowMicroseconds)
 
 }
 
-TEST(Base_Timestamp, isUTimeLt)
+TEST(Base_Timestamp, isLt_UTime)
 {
     struct timeval tv;
 
@@ -156,15 +155,15 @@ TEST(Base_Timestamp, isUTimeLt)
 
     UTime now = newUTime( tv.tv_sec * MicroSecondsPerSecond );
     UTime now2 = newUTime( tv.tv_sec * MicroSecondsPerSecond );
-    UTime after = uTimeAfterUnixTime(tv.tv_sec , 1);
+    UTime after = afterUnixTime_UTime(tv.tv_sec , 1);
 
-    EXPECT_TRUE(isUTimeLt(now, after) );
-    EXPECT_FALSE(isUTimeLt(now, now2) );
-    EXPECT_FALSE(isUTimeLt(after, now) );
+    EXPECT_TRUE(isLt_UTime(now, after) );
+    EXPECT_FALSE(isLt_UTime(now, now2) );
+    EXPECT_FALSE(isLt_UTime(after, now) );
 
 }
 
-TEST(Base_Timestamp, isUTimeEq)
+TEST(Base_Timestamp, isEq_UTime )
 {
     struct timeval tv;
 
@@ -172,30 +171,30 @@ TEST(Base_Timestamp, isUTimeEq)
 
     UTime now = newUTime( tv.tv_sec * MicroSecondsPerSecond );
     UTime now2 = newUTime( tv.tv_sec * MicroSecondsPerSecond );
-    UTime after = uTimeAfterUnixTime(tv.tv_sec , 1);
+    UTime after = afterUnixTime_UTime(tv.tv_sec , 1);
 
-    EXPECT_TRUE(isUTimeEq(now, now2) );
-    EXPECT_FALSE(isUTimeEq(now, after) );
-    EXPECT_FALSE(isUTimeEq(after, now) );
+    EXPECT_TRUE(isEq_UTime(now, now2) );
+    EXPECT_FALSE(isEq_UTime(now, after) );
+    EXPECT_FALSE(isEq_UTime(after, now) );
 
 }
 
-TEST(Base_Timestamp, uTimeDiff)
+TEST(Base_Timestamp, diffTime_UTime)
 {
     struct timeval tv;
 
     gettimeofday(&tv, NULL);
 
-    UTime now = uTimeNow(); 
+    UTime now = now_UTime(); 
     UTime after = now;
     after.microSec += 123456;
 
-    EXPECT_EQ(0.123456, uTimeDiff(after, now));
-    EXPECT_EQ(-0.123456, uTimeDiff(now, after));
+    EXPECT_EQ(0.123456, diffTime_UTime(after, now));
+    EXPECT_EQ(-0.123456, diffTime_UTime(now, after));
 
 }
 
-TEST(Base_Timestamp, uTimeAddTime)
+TEST(Base_Timestamp, addTime_UTime)
 {
     struct timeval tv;
 
@@ -204,15 +203,15 @@ TEST(Base_Timestamp, uTimeAddTime)
     UTime now = newUTime( tv.tv_sec * MicroSecondsPerSecond );
     UTime added = now;
 
-    uTimeAddTime(&added, 0.123456);
+    addTime_UTime(&added, 0.123456);
     EXPECT_EQ(123456, added.microSec - now.microSec);
 
     added = now;
-    uTimeAddTime(&added, -0.123456);
+    addTime_UTime(&added, -0.123456);
     EXPECT_EQ(-123456, added.microSec - now.microSec);
 
     added = now;
-    uTimeAddTime(&added, 0);
+    addTime_UTime(&added, 0);
     EXPECT_EQ(added.microSec, now.microSec);
 }
 
