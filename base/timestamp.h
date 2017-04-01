@@ -60,7 +60,7 @@ UTime afterUnixTime_UTime(time_t t, int microseconds);
 ///
 /// @return
 ///
-void toString_UTime(UTime *uTime, char outBuf[Size32B]);
+char * toString_UTime(UTime const * const uTime, char outBuf[Size32B]);
 
 ///
 /// Parse UTime into formated string.
@@ -69,7 +69,7 @@ void toString_UTime(UTime *uTime, char outBuf[Size32B]);
 ///
 /// @return
 ///
-void toFormattedString_UTime(UTime *uTime, char outBuf[Size32B], bool showMicroseconds);
+char * toFormattedString_UTime(UTime const * const uTime, char outBuf[Size32B], bool const showMicroseconds);
 
 inline bool isLt_UTime(UTime lUTime, UTime rUTime)
 {
@@ -98,11 +98,14 @@ inline double diffTime_UTime(UTime t1, UTime t2)
 ///
 /// @return non
 ///
-inline void addTime_UTime(UTime *uTime, double seconds)
+inline UTime * addTime_UTime(UTime * const uTime, double seconds)
 {
     if (uTime == NULL)
-        return;
+        return NULL;
+
     uTime->microSec += (int64_t)(seconds * MicroSecondsPerSecond);
+
+    return uTime;
 }
 
 #ifdef __cplusplus

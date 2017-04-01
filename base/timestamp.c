@@ -58,12 +58,17 @@ UTime afterUnixTime_UTime(time_t t, int microseconds)
 ///
 /// @return
 ///
-void toString_UTime(UTime *uTime, char outBuf[Size32B])
+char * toString_UTime(UTime const * const uTime, char outBuf[Size32B])
 {
+    if( uTime == NULL || outBuf == NULL )
+        return NULL;
+
     memset(outBuf,Size32B,0x00);
     int64_t seconds = uTime->microSec / MicroSecondsPerSecond;
     int64_t microseconds = uTime->microSec % MicroSecondsPerSecond;
     snprintf(outBuf, Size32B - 1, "%" PRId64 ".%06" PRId64 "", seconds, microseconds);
+
+    return outBuf;
 }
 
 ///
@@ -73,20 +78,14 @@ void toString_UTime(UTime *uTime, char outBuf[Size32B])
 ///
 /// @return
 ///
-void toFormattedString_UTime(UTime *uTime, char outBuf[Size32B], bool showMicroseconds)
+char * toFormattedString_UTime(UTime const * const uTime, char outBuf[Size32B], bool const showMicroseconds)
 {
+    if( uTime == NULL || outBuf == NULL )
+        return NULL;
+
     time_t seconds = (time_t)(uTime->microSec / MicroSecondsPerSecond);
     struct tm tm_time;
     tm_time.tm_isdst = -1;
-/*
-    struct timeval tv;
-    struct timezone tz;
-    gettimeofday (&tv , &tz);
-    printf("tv_sec; %d\n",(int)tv.tv_sec);
-    printf("tv_usec; %d\n",(int)tv.tv_usec);
-    printf("tz_minuteswest; %d\n",tz.tz_minuteswest);
-    printf("tz_dsttime, %d\n",tz.tz_dsttime);
-    */
 
     memset(outBuf, Size32B, 0x00);
     gmtime_r(&seconds, &tm_time);
@@ -106,6 +105,8 @@ void toFormattedString_UTime(UTime *uTime, char outBuf[Size32B], bool showMicros
                 tm_time.tm_year + 1900, tm_time.tm_mon + 1, tm_time.tm_mday, 
                 tm_time.tm_hour, tm_time.tm_min, tm_time.tm_sec); 
     }
+
+    return outBuf;
 }
 
 

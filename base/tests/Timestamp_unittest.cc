@@ -40,6 +40,37 @@ TEST(Base_Timestamp, afterUnixTime_UTime )
 
 }
 
+TEST(Base_Timestamp, toString_UTime_null_args)
+{
+    char buf[Size32B];
+    time_t ret;
+    struct tm tm_time;
+    char buffer[80];
+
+    memset(&tm_time,0x00,sizeof(tm_time));
+    //Wed Jul 4 00:00:01 2001
+    tm_time.tm_zone = "UTC";
+    tm_time.tm_year = 2001 - 1900;
+    tm_time.tm_mon = 7 - 1;
+    tm_time.tm_mday = 4;
+    tm_time.tm_hour = 0;
+    tm_time.tm_min = 0;
+    tm_time.tm_sec = 1;
+    tm_time.tm_isdst = -1;
+
+    ret = static_cast<time_t>(mktime(&tm_time));
+
+    ASSERT_NE(-1,ret);
+    sprintf(buffer,"%ld",ret);
+    ASSERT_LT(0,static_cast<int>(strlen(buffer)));
+
+    UTime now = afterUnixTime_UTime(ret,0);
+
+    EXPECT_EQ(NULL,toString_UTime(NULL, buf));
+    EXPECT_EQ(NULL,toString_UTime(&now, NULL));
+    EXPECT_EQ(NULL,toString_UTime(NULL, NULL));
+}
+
 TEST(Base_Timestamp, toString_UTime)
 {
     char buf[Size32B];
@@ -65,7 +96,7 @@ TEST(Base_Timestamp, toString_UTime)
     ASSERT_LT(0,static_cast<int>(strlen(buffer)));
 
     UTime now = afterUnixTime_UTime(ret,0);
-    toString_UTime(&now, buf);
+    EXPECT_NE(static_cast<char *>(NULL),toString_UTime(&now, buf));
     ASSERT_LT(0,static_cast<int>(strlen(buf)));
 
     ASSERT_EQ(strlen(buffer),strlen(buf) - 7);
@@ -113,6 +144,17 @@ TEST(Base_Timestamp, toFormattedString_UTime_DoNotShowMicroseconds)
     ASSERT_LT(0,static_cast<int>(strlen(buf)));
 
     ASSERT_EQ(0,strncmp(bufExp,buf,strlen(bufExp)));
+
+}
+
+TEST(Base_Timestamp, toFormattedString_UTime_null_args)
+{
+    char buf[Size32B] = {0};
+    UTime now = now_UTime();
+
+    EXPECT_EQ(NULL,toFormattedString_UTime(NULL, buf, true));
+    EXPECT_EQ(NULL,toFormattedString_UTime(&now, NULL, true));
+    EXPECT_EQ(NULL,toFormattedString_UTime(NULL, NULL, true));
 
 }
 
@@ -204,6 +246,11 @@ TEST(Base_Timestamp, diffTime_UTime)
     EXPECT_EQ(0.123456, diffTime_UTime(after, now));
     EXPECT_EQ(-0.123456, diffTime_UTime(now, after));
 
+}
+
+TEST(Base_Timestamp, addTime_UTime_null_args)
+{
+    EXPECT_EQ(NULL,addTime_UTime(NULL, 0.123456));
 }
 
 TEST(Base_Timestamp, addTime_UTime)
