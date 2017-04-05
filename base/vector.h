@@ -22,11 +22,12 @@ typedef struct
     int count;
 } UVector;
 
-#define newUVector() { NULL, 0, 0};
+#define create_UVector() { NULL, 0, 0};
 
 UVector * init_UVector(UVector * const uVector);
 UVector * free_UVector(UVector * const uVector);
 
+int size_UVector(UVector const * const uVector);
 int count_UVector(UVector const * const uVector);
 
 void * addObj_UVector(UVector * const uVector, void * const obj);
