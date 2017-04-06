@@ -111,17 +111,20 @@ void * deleteObj_UVector(UVector * const uVector, int const index)
 
 void * set_UVector(UVector * const uVector, int const index, void * const obj)
 {
-    if( uVector == NULL)
+    void * oldObj = NULL;
+
+    if( uVector == NULL || obj == NULL)
         return NULL;
 
-    if (index >= uVector->count)
+    if (index < 0 || index >= uVector->count)
     {
         return NULL;
     }
 
+    oldObj = uVector->data[index];
     uVector->data[index] = obj;
 
-    return uVector->data[index];
+    return oldObj;
 }
 
 void * get_UVector(UVector const * const uVector, int const index)
@@ -129,7 +132,7 @@ void * get_UVector(UVector const * const uVector, int const index)
     if( uVector == NULL)
         return NULL;
 
-    if (index >= uVector->count)
+    if (index < 0 || index >= uVector->count)
     {
         return NULL;
     }
