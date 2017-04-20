@@ -113,7 +113,7 @@ void *setFuc_0x55_atomicInt_getAndSet(void *arg)
         case 5:
             for(i = 0; i < TestTimes; i++)
             {
-                AtomicInt8 _i8 = atomicInt_getAndSet(i8, 0x55);
+                AtomicInt8 _i8 = atomicInt_getAndSet(i8, static_cast<AtomicInt8>(0x55));
                 if(_i8 != static_cast<AtomicInt8>(0x55))
                 {
                     EXPECT_EQ(static_cast<AtomicInt8>(0xaa), _i8);
@@ -152,6 +152,7 @@ void *setFuc_0x55_atomicInt_getAndSet(void *arg)
                 else
                     EXPECT_EQ(static_cast<AtomicInt64>(0x5555555555555555), _i64);
             }
+            break;
     }
 
     //printf("[%s]:i:%x\n",__func__,i);
@@ -368,4 +369,748 @@ TEST(Base_UAtomic, atomicInt_getAndSet)
     }
 
 }
+
+typedef struct _tAtomicInt 
+{
+    int tCaseId;
+    int tAddCount;
+
+    AtomicUInt8 ui8;
+    AtomicUInt16 ui16;
+    AtomicUInt32 ui32;
+    AtomicUInt64 ui64;
+
+    AtomicInt8 i8;
+    AtomicInt16 i16;
+    AtomicInt32 i32;
+    AtomicInt64 i64;
+} TAtomicInt;
+
+void *addFunc_atomicInt_getAndAdd(void *arg)
+{
+    TAtomicInt *c = static_cast<TAtomicInt*>(arg);
+    int i;
+
+    switch(c->tCaseId)
+    {
+        case 1:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicUInt8 p_ui8 = atomicInt_getAndAdd(c->ui8, static_cast<AtomicUInt8>(0x01));
+                AtomicUInt8 a_ui8 = atomicInt_get(c->ui8);
+                EXPECT_LT(p_ui8, a_ui8);
+            }
+            break;
+        case 2:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicUInt16 p_ui16 = atomicInt_getAndAdd(c->ui16, static_cast<AtomicUInt16>(0x01));
+                AtomicUInt16 a_ui16 = atomicInt_get(c->ui16);
+                EXPECT_LT(p_ui16, a_ui16);
+            }
+            break;
+        case 3:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicUInt32 p_ui32 = atomicInt_getAndAdd(c->ui32, static_cast<AtomicUInt32>(0x01));
+                AtomicUInt32 a_ui32 = atomicInt_get(c->ui32);
+                EXPECT_LT(p_ui32, a_ui32);
+            }
+            break;
+        case 4:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicUInt64 p_ui64 = atomicInt_getAndAdd(c->ui64, static_cast<AtomicUInt64>(0x01));
+                AtomicUInt64 a_ui64 = atomicInt_get(c->ui64);
+                EXPECT_LT(p_ui64, a_ui64);
+            }
+            break;
+        case 5:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicInt8 p_i8 = atomicInt_getAndAdd(c->i8, static_cast<AtomicInt8>(0x01));
+                AtomicInt8 a_i8 = atomicInt_get(c->i8);
+                EXPECT_LT(p_i8, a_i8);
+            }
+            break;
+        case 6:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicInt16 p_i16 = atomicInt_getAndAdd(c->i16, static_cast<AtomicInt16>(0x01));
+                AtomicInt16 a_i16 = atomicInt_get(c->i16);
+                EXPECT_LT(p_i16, a_i16);
+            }
+            break;
+        case 7:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicInt32 p_i32 = atomicInt_getAndAdd(c->i32, static_cast<AtomicInt32>(0x01));
+                AtomicInt32 a_i32 = atomicInt_get(c->i32);
+                EXPECT_LT(p_i32, a_i32);
+            }
+            break;
+        case 8:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicInt64 p_i64 = atomicInt_getAndAdd(c->i64, static_cast<AtomicInt64>(0x01));
+                AtomicInt64 a_i64 = atomicInt_get(c->i64);
+                EXPECT_LT(p_i64, a_i64);
+            }
+            break;
+    }
+
+    //printf("[%s]:i:%x\n",__func__,i);
+    return NULL;
+}
+
+TEST(Base_UAtomic, atomicInt_getAndAdd)
+{
+
+    for(int i = 0; i < 8; ++i)
+    {
+        pthread_t id[4];
+        TAtomicInt * cc = NULL;
+
+        cc = static_cast<TAtomicInt *>(calloc(1,sizeof(TAtomicInt)));
+        EXPECT_NE(static_cast<TAtomicInt *>(NULL),cc);
+        cc->tCaseId = i + 1;
+
+        switch(cc->tCaseId)
+        {
+            case 1:
+                cc->tAddCount = static_cast<AtomicUInt8>(0xff / 2);
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_getAndAdd,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_getAndAdd,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicUInt8>(0xff -1),cc->ui8);
+                free(cc);
+                break;
+            case 2:
+                cc->tAddCount = static_cast<AtomicUInt16>(0xffff / 2);
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_getAndAdd,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_getAndAdd,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicUInt16>(0xffff - 1),cc->ui16);
+                free(cc);
+                break;
+            case 3:
+                cc->ui32 = static_cast<AtomicUInt32>(0xffff0000);
+                cc->tAddCount = 0xffff / 2;
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_getAndAdd,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_getAndAdd,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicUInt32>(0xffffffff - 1),cc->ui32);
+                free(cc);
+                break;
+            case 4:
+                cc->ui64 = static_cast<AtomicUInt64>(0xffffffffffff0000);
+                cc->tAddCount = 0xffff / 2;
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_getAndAdd,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_getAndAdd,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicUInt64>(0xffffffffffffffff - 1),cc->ui64);
+                free(cc);
+                break;
+            case 5:
+                cc->tAddCount = static_cast<AtomicInt8>(0x7f / 2);
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_getAndAdd,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_getAndAdd,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicInt8>(0x7f -1),cc->i8);
+                free(cc);
+                break;
+            case 6:
+                cc->tAddCount = static_cast<AtomicInt16>(0x7fff / 2);
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_getAndAdd,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_getAndAdd,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicInt16>(0x7fff - 1),cc->i16);
+                free(cc);
+                break;
+            case 7:
+                cc->i32 = static_cast<AtomicInt32>(0x7fff0000);
+                cc->tAddCount = 0xffff / 2;
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_getAndAdd,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_getAndAdd,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicInt32>(0x7fffffff - 1),cc->i32);
+                free(cc);
+                break;
+            case 8:
+                cc->i64 = static_cast<AtomicInt64>(0x7fffffffffff0000);
+                cc->tAddCount = 0xffff / 2;
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_getAndAdd,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_getAndAdd,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicInt64>(0x7fffffffffffffff - 1),cc->i64);
+                free(cc);
+                break;
+        }
+    }
+
+}
+
+void *addFunc_atomicInt_addAndGet(void *arg)
+{
+    TAtomicInt *c = static_cast<TAtomicInt*>(arg);
+    int i;
+
+    switch(c->tCaseId)
+    {
+        case 1:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicUInt8 p_ui8 = atomicInt_get(c->ui8);
+                AtomicUInt8 a_ui8 = atomicInt_addAndGet(c->ui8, static_cast<AtomicUInt8>(0x01));
+                EXPECT_LT(p_ui8, a_ui8);
+            }
+            break;
+        case 2:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicUInt16 p_ui16 = atomicInt_get(c->ui16);
+                AtomicUInt16 a_ui16 = atomicInt_addAndGet(c->ui16, static_cast<AtomicUInt16>(0x01));
+                EXPECT_LT(p_ui16, a_ui16);
+            }
+            break;
+        case 3:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicUInt32 p_ui32 = atomicInt_get(c->ui32);
+                AtomicUInt32 a_ui32 = atomicInt_addAndGet(c->ui32, static_cast<AtomicUInt32>(0x01));
+                EXPECT_LT(p_ui32, a_ui32);
+            }
+            break;
+        case 4:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicUInt64 p_ui64 = atomicInt_get(c->ui64);
+                AtomicUInt64 a_ui64 = atomicInt_addAndGet(c->ui64, static_cast<AtomicUInt64>(0x01));
+                EXPECT_LT(p_ui64, a_ui64);
+            }
+            break;
+        case 5:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicInt8 p_i8 = atomicInt_get(c->i8);
+                AtomicInt8 a_i8 = atomicInt_addAndGet(c->i8, static_cast<AtomicInt8>(0x01));
+                EXPECT_LT(p_i8, a_i8);
+            }
+            break;
+        case 6:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicInt16 p_i16 = atomicInt_get(c->i16);
+                AtomicInt16 a_i16 = atomicInt_addAndGet(c->i16, static_cast<AtomicInt16>(0x01));
+                EXPECT_LT(p_i16, a_i16);
+            }
+            break;
+        case 7:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicInt32 p_i32 = atomicInt_get(c->i32);
+                AtomicInt32 a_i32 = atomicInt_addAndGet(c->i32, static_cast<AtomicInt32>(0x01));
+                EXPECT_LT(p_i32, a_i32);
+            }
+            break;
+        case 8:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicInt64 p_i64 = atomicInt_get(c->i64);
+                AtomicInt64 a_i64 = atomicInt_addAndGet(c->i64, static_cast<AtomicInt64>(0x01));
+                EXPECT_LT(p_i64, a_i64);
+            }
+            break;
+    }
+
+    //printf("[%s]:i:%x\n",__func__,i);
+    return NULL;
+}
+
+TEST(Base_UAtomic, atomicInt_addAndGet)
+{
+
+    for(int i = 0; i < 8; ++i)
+    {
+        pthread_t id[4];
+        TAtomicInt * cc = NULL;
+
+        cc = static_cast<TAtomicInt *>(calloc(1,sizeof(TAtomicInt)));
+        EXPECT_NE(static_cast<TAtomicInt *>(NULL),cc);
+        cc->tCaseId = i + 1;
+
+        switch(cc->tCaseId)
+        {
+            case 1:
+                cc->tAddCount = static_cast<AtomicUInt8>(0xff / 2);
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_addAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_addAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicUInt8>(0xff -1),cc->ui8);
+                free(cc);
+                break;
+            case 2:
+                cc->tAddCount = static_cast<AtomicUInt16>(0xffff / 2);
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_addAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_addAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicUInt16>(0xffff - 1),cc->ui16);
+                free(cc);
+                break;
+            case 3:
+                cc->ui32 = static_cast<AtomicUInt32>(0xffff0000);
+                cc->tAddCount = 0xffff / 2;
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_addAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_addAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicUInt32>(0xffffffff - 1),cc->ui32);
+                free(cc);
+                break;
+            case 4:
+                cc->ui64 = static_cast<AtomicUInt64>(0xffffffffffff0000);
+                cc->tAddCount = 0xffff / 2;
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_addAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_addAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicUInt64>(0xffffffffffffffff - 1),cc->ui64);
+                free(cc);
+                break;
+            case 5:
+                cc->tAddCount = static_cast<AtomicInt8>(0x7f / 2);
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_addAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_addAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicInt8>(0x7f -1),cc->i8);
+                free(cc);
+                break;
+            case 6:
+                cc->tAddCount = static_cast<AtomicInt16>(0x7fff / 2);
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_addAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_addAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicInt16>(0x7fff - 1),cc->i16);
+                free(cc);
+                break;
+            case 7:
+                cc->i32 = static_cast<AtomicInt32>(0x7fff0000);
+                cc->tAddCount = 0xffff / 2;
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_addAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_addAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicInt32>(0x7fffffff - 1),cc->i32);
+                free(cc);
+                break;
+            case 8:
+                cc->i64 = static_cast<AtomicInt64>(0x7fffffffffff0000);
+                cc->tAddCount = 0xffff / 2;
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_addAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_addAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicInt64>(0x7fffffffffffffff - 1),cc->i64);
+                free(cc);
+                break;
+        }
+    }
+
+}
+
+void *addFunc_atomicInt_IncrementAndGet(void *arg)
+{
+    TAtomicInt *c = static_cast<TAtomicInt*>(arg);
+    int i;
+
+    switch(c->tCaseId)
+    {
+        case 1:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicUInt8 p_ui8 = atomicInt_get(c->ui8);
+                AtomicUInt8 a_ui8 = atomicInt_IncrementAndGet(c->ui8);
+                EXPECT_LT(p_ui8, a_ui8);
+            }
+            break;
+        case 2:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicUInt16 p_ui16 = atomicInt_get(c->ui16);
+                AtomicUInt16 a_ui16 = atomicInt_IncrementAndGet(c->ui16);
+                EXPECT_LT(p_ui16, a_ui16);
+            }
+            break;
+        case 3:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicUInt32 p_ui32 = atomicInt_get(c->ui32);
+                AtomicUInt32 a_ui32 = atomicInt_IncrementAndGet(c->ui32);
+                EXPECT_LT(p_ui32, a_ui32);
+            }
+            break;
+        case 4:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicUInt64 p_ui64 = atomicInt_get(c->ui64);
+                AtomicUInt64 a_ui64 = atomicInt_IncrementAndGet(c->ui64);
+                EXPECT_LT(p_ui64, a_ui64);
+            }
+            break;
+        case 5:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicInt8 p_i8 = atomicInt_get(c->i8);
+                AtomicInt8 a_i8 = atomicInt_IncrementAndGet(c->i8);
+                EXPECT_LT(p_i8, a_i8);
+            }
+            break;
+        case 6:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicInt16 p_i16 = atomicInt_get(c->i16);
+                AtomicInt16 a_i16 = atomicInt_IncrementAndGet(c->i16);
+                EXPECT_LT(p_i16, a_i16);
+            }
+            break;
+        case 7:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicInt32 p_i32 = atomicInt_get(c->i32);
+                AtomicInt32 a_i32 = atomicInt_IncrementAndGet(c->i32);
+                EXPECT_LT(p_i32, a_i32);
+            }
+            break;
+        case 8:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicInt64 p_i64 = atomicInt_get(c->i64);
+                AtomicInt64 a_i64 = atomicInt_IncrementAndGet(c->i64);
+                EXPECT_LT(p_i64, a_i64);
+            }
+            break;
+    }
+
+    //printf("[%s]:i:%x\n",__func__,i);
+    return NULL;
+}
+
+TEST(Base_UAtomic, atomicInt_atomicInt_IncrementAndGet)
+{
+
+    for(int i = 0; i < 8; ++i)
+    {
+        pthread_t id[4];
+        TAtomicInt * cc = NULL;
+
+        cc = static_cast<TAtomicInt *>(calloc(1,sizeof(TAtomicInt)));
+        EXPECT_NE(static_cast<TAtomicInt *>(NULL),cc);
+        cc->tCaseId = i + 1;
+
+        switch(cc->tCaseId)
+        {
+            case 1:
+                cc->tAddCount = static_cast<AtomicUInt8>(0xff / 2);
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_IncrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_IncrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicUInt8>(0xff -1),cc->ui8);
+                free(cc);
+                break;
+            case 2:
+                cc->tAddCount = static_cast<AtomicUInt16>(0xffff / 2);
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_IncrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_IncrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicUInt16>(0xffff - 1),cc->ui16);
+                free(cc);
+                break;
+            case 3:
+                cc->ui32 = static_cast<AtomicUInt32>(0xffff0000);
+                cc->tAddCount = 0xffff / 2;
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_IncrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_IncrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicUInt32>(0xffffffff - 1),cc->ui32);
+                free(cc);
+                break;
+            case 4:
+                cc->ui64 = static_cast<AtomicUInt64>(0xffffffffffff0000);
+                cc->tAddCount = 0xffff / 2;
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_IncrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_IncrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicUInt64>(0xffffffffffffffff - 1),cc->ui64);
+                free(cc);
+                break;
+            case 5:
+                cc->tAddCount = static_cast<AtomicInt8>(0x7f / 2);
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_IncrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_IncrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicInt8>(0x7f -1),cc->i8);
+                free(cc);
+                break;
+            case 6:
+                cc->tAddCount = static_cast<AtomicInt16>(0x7fff / 2);
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_IncrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_IncrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicInt16>(0x7fff - 1),cc->i16);
+                free(cc);
+                break;
+            case 7:
+                cc->i32 = static_cast<AtomicInt32>(0x7fff0000);
+                cc->tAddCount = 0xffff / 2;
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_IncrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_IncrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicInt32>(0x7fffffff - 1),cc->i32);
+                free(cc);
+                break;
+            case 8:
+                cc->i64 = static_cast<AtomicInt64>(0x7fffffffffff0000);
+                cc->tAddCount = 0xffff / 2;
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_IncrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_IncrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicInt64>(0x7fffffffffffffff - 1),cc->i64);
+                free(cc);
+                break;
+        }
+    }
+
+}
+
+void *addFunc_atomicInt_DecrementAndGet(void *arg)
+{
+    TAtomicInt *c = static_cast<TAtomicInt*>(arg);
+    int i;
+
+    switch(c->tCaseId)
+    {
+        case 1:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicUInt8 p_ui8 = atomicInt_get(c->ui8);
+                AtomicUInt8 a_ui8 = atomicInt_DecrementAndGet(c->ui8);
+                EXPECT_GT(p_ui8, a_ui8);
+            }
+            break;
+        case 2:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicUInt16 p_ui16 = atomicInt_get(c->ui16);
+                AtomicUInt16 a_ui16 = atomicInt_DecrementAndGet(c->ui16);
+                EXPECT_GT(p_ui16, a_ui16);
+            }
+            break;
+        case 3:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicUInt32 p_ui32 = atomicInt_get(c->ui32);
+                AtomicUInt32 a_ui32 = atomicInt_DecrementAndGet(c->ui32);
+                EXPECT_GT(p_ui32, a_ui32);
+            }
+            break;
+        case 4:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicUInt64 p_ui64 = atomicInt_get(c->ui64);
+                AtomicUInt64 a_ui64 = atomicInt_DecrementAndGet(c->ui64);
+                EXPECT_GT(p_ui64, a_ui64);
+            }
+            break;
+        case 5:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicInt8 p_i8 = atomicInt_get(c->i8);
+                AtomicInt8 a_i8 = atomicInt_DecrementAndGet(c->i8);
+                EXPECT_GT(p_i8, a_i8);
+            }
+            break;
+        case 6:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicInt16 p_i16 = atomicInt_get(c->i16);
+                AtomicInt16 a_i16 = atomicInt_DecrementAndGet(c->i16);
+                EXPECT_GT(p_i16, a_i16);
+            }
+            break;
+        case 7:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicInt32 p_i32 = atomicInt_get(c->i32);
+                AtomicInt32 a_i32 = atomicInt_DecrementAndGet(c->i32);
+                EXPECT_GT(p_i32, a_i32);
+            }
+            break;
+        case 8:
+            for(i = 0; i < c->tAddCount; i++)
+            {
+                AtomicInt64 p_i64 = atomicInt_get(c->i64);
+                AtomicInt64 a_i64 = atomicInt_DecrementAndGet(c->i64);
+                EXPECT_GT(p_i64, a_i64);
+            }
+            break;
+    }
+
+    //printf("[%s]:i:%x\n",__func__,i);
+    return NULL;
+}
+
+TEST(Base_UAtomic, atomicInt_atomicInt_DecrementAndGet)
+{
+
+    for(int i = 0; i < 8; ++i)
+    {
+        pthread_t id[4];
+        TAtomicInt * cc = NULL;
+
+        cc = static_cast<TAtomicInt *>(calloc(1,sizeof(TAtomicInt)));
+        EXPECT_NE(static_cast<TAtomicInt *>(NULL),cc);
+        cc->tCaseId = i + 1;
+
+        switch(cc->tCaseId)
+        {
+            case 1:
+                cc->tAddCount = static_cast<AtomicUInt8>(0xff / 2);
+                cc->ui8 = static_cast<AtomicUInt8>(0xff - 1);
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_DecrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_DecrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicUInt8>(0x00),cc->ui8);
+                free(cc);
+                break;
+            case 2:
+                cc->tAddCount = static_cast<AtomicUInt16>(0xffff / 2);
+                cc->ui16 = static_cast<AtomicUInt16>(0xffff - 1);
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_DecrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_DecrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicUInt16>(0x00),cc->ui16);
+                free(cc);
+                break;
+            case 3:
+                cc->tAddCount = 0xffff / 2;
+                cc->ui32 = static_cast<AtomicUInt32>(0xffffffff - 1);
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_DecrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_DecrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicUInt32>(0xffff0000),cc->ui32);
+                free(cc);
+                break;
+            case 4:
+                cc->tAddCount = 0xffff / 2;
+                cc->ui64 = static_cast<AtomicUInt64>(0xffffffffffffffff - 1);
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_DecrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_DecrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicUInt64>(0xffffffffffff0000),cc->ui64);
+                free(cc);
+                break;
+            case 5:
+                cc->i8 = static_cast<AtomicInt8>(0x7f - 1);
+                cc->tAddCount = static_cast<AtomicInt8>(0x7f / 2);
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_DecrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_DecrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicInt8>(0x00),cc->i8);
+                free(cc);
+                break;
+            case 6:
+                cc->i16 = static_cast<AtomicInt16>(0x7fff - 1);
+                cc->tAddCount = static_cast<AtomicInt16>(0x7fff / 2);
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_DecrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_DecrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicInt16>(0x00),cc->i16);
+                free(cc);
+                break;
+            case 7:
+                cc->i32 = static_cast<AtomicInt32>(0x7fffffff - 1);
+                cc->tAddCount = 0xffff / 2;
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_DecrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_DecrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicInt32>(0x7fff0000),cc->i32);
+                free(cc);
+                break;
+            case 8:
+                cc->i64 = static_cast<AtomicInt64>(0x7fffffffffffffff - 1);
+                cc->tAddCount = 0xffff / 2;
+                //printf("--- tCaseId:%d tAddCount:%d ---\n", cc->tCaseId, cc->tAddCount);
+                pthread_create(&id[0],NULL, addFunc_atomicInt_DecrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_create(&id[1],NULL, addFunc_atomicInt_DecrementAndGet,static_cast<TAtomicInt*>(cc));
+                pthread_join(id[0],NULL);
+                pthread_join(id[1],NULL);
+                EXPECT_EQ(static_cast<AtomicInt64>(0x7fffffffffff0000),cc->i64);
+                free(cc);
+                break;
+        }
+    }
+
+}
+
+
+
+
 
